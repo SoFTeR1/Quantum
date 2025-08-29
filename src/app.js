@@ -10,7 +10,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://127.0.0.1:8080', // Адрес вашего Live Server
-    'http://localhost:8080'  // Иногда Live Server использует этот адрес
+    'http://localhost:8080', // Иногда Live Server использует этот адрес
 	'https://quantum-opal.vercel.app'
     // Можно добавить и другие адреса, если потребуется
   ]
