@@ -68,10 +68,14 @@ const updateProfilePicture = async (req, res) => {
   }
   
   try {
-    const filename = req.file.filename;
+    // -------------------------------------------------------------------------
+    // ИЗМЕНЕНО: Получаем полный URL из req.file.path, а не имя файла
+    // -------------------------------------------------------------------------
+    const imageUrl = req.file.path; 
+
     const updatedUser = await pool.query(
       'UPDATE users SET profile_picture_url = $1 WHERE id = $2 RETURNING id, username, email, profile_picture_url, bio',
-      [filename, req.user.id]
+      [imageUrl, req.user.id] // Сохраняем в БД полный URL
     );
     res.json(updatedUser.rows[0]);
   } catch (err) {
@@ -107,7 +111,6 @@ const updateUserSettings = async (req, res) => {
     try {
         const result = await pool.query('SELECT settings FROM users WHERE id = $1', [req.user.id]);
         const currentSettings = result.rows[0].settings || {};
-        // Сливаем старые и новые настройки, новые перезаписывают старые
         const updatedSettings = { ...currentSettings, ...newSettings };
 
         await pool.query('UPDATE users SET settings = $1 WHERE id = $2', [updatedSettings, req.user.id]);
@@ -151,7 +154,6 @@ const changePassword = async (req, res) => {
         res.status(500).send('Ошибка сервера');
     }
 };
-
 
 module.exports = {
   getMe,
